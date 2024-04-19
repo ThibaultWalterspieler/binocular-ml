@@ -1,0 +1,9 @@
+tensorflow
+tensorflow-metal
+numpy
+matplotlib
+scipy
+# Testing
+opencv-python
+mtcnn
+opencv-python
