@@ -19,4 +19,4 @@ ENV/
 Thumbs.db
 
 # Datasets
-datasets/
+data/
