@@ -28,7 +28,7 @@ Ensure your dataset is structured properly under the datasets/ directory with th
 To start training the model, use the following command:
 
 ```bash
-poetry run python classification_train.py
+poetry run python src/train.py
 ```
 
 ## Testing
@@ -36,5 +36,5 @@ poetry run python classification_train.py
 If you want to test the model using your webcam, run the following command:
 
 ```bash
-python webcam_test.py
+poetry run python src/testing/webcam_test.py
 ```
