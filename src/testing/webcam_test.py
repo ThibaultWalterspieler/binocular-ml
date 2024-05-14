@@ -5,7 +5,7 @@ import numpy as np
 from mtcnn import MTCNN
 from tensorflow import keras
 
-model_path = os.path.join("next.keras")
+model_path = os.path.join("models", "binocular_model.keras")
 
 model = keras.models.load_model(model_path)
 detector = MTCNN()

@@ -6,9 +6,10 @@ from mtcnn import MTCNN
 from tensorflow import keras
 
 test_dataset_path = os.path.join("data", "PeopleWithGlassesDataset", "test")
-model_path = os.path.join("models", "next.keras")
+model_path = os.path.join("models", "binocular_model.keras")
 
 MODEL = keras.models.load_model(model_path)
+
 detector = MTCNN()
 
 test_dataset = tf.keras.utils.image_dataset_from_directory(
