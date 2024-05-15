@@ -1,9 +1,11 @@
+import datetime
 import os
 
 import matplotlib.pyplot as plt
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import callbacks, layers
+from tensorflow.keras.callbacks import TensorBoard
 
 TRAINING_DIR = "data/PeopleWithGlassesDataset/train"
 IMAGE_SIZE = (128, 128)
@@ -93,13 +95,14 @@ def compile_model(model):
     )
 
 
-def create_callbacks():
+def create_callbacks(log_dir):
     return [
         callbacks.EarlyStopping(
             monitor="val_loss",
             patience=5,
             restore_best_weights=True,
-        )
+        ),
+        TensorBoard(log_dir=log_dir, histogram_freq=1),
     ]
 
 
@@ -125,11 +128,15 @@ def main():
     train_dataset, validation_dataset = load_and_preprocess_dataset(data_augmentation)
     model = create_model()
     compile_model(model)
-    callbacks = create_callbacks()
+
+    log_dir = "logs/fit/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+    callbacks = create_callbacks(log_dir)
+
     history = train_model(
         model, train_dataset, validation_dataset, class_weight, callbacks
     )
     save_model(model, "binocular_model.keras")
+    print("Model saved as binocular_model.keras")
 
 
 if __name__ == "__main__":
