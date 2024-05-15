@@ -2,7 +2,6 @@ import argparse
 import datetime
 import os
 
-import matplotlib.pyplot as plt
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import callbacks, layers, regularizers
