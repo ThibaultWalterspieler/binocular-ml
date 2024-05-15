@@ -6,7 +6,7 @@ This project develops a deep learning model using TensorFlow and Keras to differ
 
 ## Requirements
 
-- Python 3.8 or higher
+- Python 3.12
 - Poetry for dependency management
 
 ## Setup Instructions
@@ -21,7 +21,7 @@ poetry install
 
 ### 2. Download the dataset
 
-Ensure your dataset is structured properly under the datasets/ directory with the subdirectories with_glasses/ and without_glasses/.
+Ensure your dataset is structured properly under the `data` directory with the subdirectories `with_glasses/` and `without_glasses/`.
 
 ### 3. Run the Model Training
 
@@ -33,8 +33,18 @@ poetry run python src/train.py
 
 ## Testing
 
+### 1. Test with your webcam
+
 If you want to test the model using your webcam, run the following command:
 
 ```bash
 poetry run python src/testing/webcam_test.py
+```
+
+### 2. Test with the test dataset
+
+To test the model using the test dataset, run the following command:
+
+```bash
+poetry run python src/testing/pictures_test.py
 ```
