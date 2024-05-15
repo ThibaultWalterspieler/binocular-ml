@@ -1,3 +1,4 @@
+import argparse
 import datetime
 import os
 
@@ -122,22 +123,34 @@ def save_model(model, model_path):
     model.save(model_path)
 
 
-def main():
+def main(changes):
     class_weight = calculate_class_weights()
     data_augmentation = create_data_augmentation()
     train_dataset, validation_dataset = load_and_preprocess_dataset(data_augmentation)
     model = create_model()
     compile_model(model)
 
-    log_dir = "logs/fit/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+    timespan = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+    log_dir = f"logs/fit/{changes}_{timespan}"
     callbacks = create_callbacks(log_dir)
 
     history = train_model(
         model, train_dataset, validation_dataset, class_weight, callbacks
     )
-    save_model(model, "binocular_model.keras")
-    print("Model saved as binocular_model.keras")
+
+    model_path = f"{changes}_{timespan}.keras"
+    save_model(model, model_path)
+    print(f"Model saved as {model_path}")
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description="Train the binocular model")
+    parser.add_argument("--changes", type=str, help="Description of the changes made")
+    args = parser.parse_args()
+
+    if args.changes is None:
+        changes = input("Enter a description of the changes made: ")
+    else:
+        changes = args.changes
+
+    main(changes)
