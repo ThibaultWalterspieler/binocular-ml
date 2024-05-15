@@ -5,7 +5,7 @@ import os
 import matplotlib.pyplot as plt
 import tensorflow as tf
 from tensorflow import keras
-from tensorflow.keras import callbacks, layers
+from tensorflow.keras import callbacks, layers, regularizers
 from tensorflow.keras.callbacks import TensorBoard
 
 TRAINING_DIR = "data/PeopleWithGlassesDataset/train"
@@ -74,16 +74,45 @@ def load_and_preprocess_dataset(data_augmentation):
 
 
 def create_model():
+    l1_reg = 0.0001
+    l2_reg = 0.0001
+
     return keras.Sequential(
         [
             layers.Input(shape=(128, 128, 3), name="input"),
-            layers.Conv2D(32, (3, 3), activation="relu", name="conv1"),
+            layers.Conv2D(
+                32,
+                (3, 3),
+                activation="relu",
+                name="conv1",
+                kernel_regularizer=regularizers.l1_l2(l1=l1_reg, l2=l2_reg),
+                bias_regularizer=regularizers.l1_l2(l1=l1_reg, l2=l2_reg),
+            ),
             layers.MaxPooling2D(2, 2, name="pool1"),
-            layers.Conv2D(128, (3, 3), activation="relu", name="conv2"),
+            layers.Conv2D(
+                128,
+                (3, 3),
+                activation="relu",
+                name="conv2",
+                kernel_regularizer=regularizers.l1_l2(l1=l1_reg, l2=l2_reg),
+                bias_regularizer=regularizers.l1_l2(l1=l1_reg, l2=l2_reg),
+            ),
             layers.MaxPooling2D(2, 2, name="pool2"),
             layers.Flatten(name="flatten"),
-            layers.Dense(128, activation="relu", name="dense1"),
-            layers.Dense(1, activation="sigmoid", name="output"),
+            layers.Dense(
+                128,
+                activation="relu",
+                name="dense1",
+                kernel_regularizer=regularizers.l1_l2(l1=l1_reg, l2=l2_reg),
+                bias_regularizer=regularizers.l1_l2(l1=l1_reg, l2=l2_reg),
+            ),
+            layers.Dense(
+                1,
+                activation="sigmoid",
+                name="output",
+                kernel_regularizer=regularizers.l1_l2(l1=l1_reg, l2=l2_reg),
+                bias_regularizer=regularizers.l1_l2(l1=l1_reg, l2=l2_reg),
+            ),
         ]
     )
 
@@ -140,6 +169,7 @@ def main(changes):
 
     model_path = f"{changes}_{timespan}.keras"
     save_model(model, model_path)
+    model.summary()
     print(f"Model saved as {model_path}")
 
 
@@ -152,5 +182,7 @@ if __name__ == "__main__":
         changes = input("Enter a description of the changes made: ")
     else:
         changes = args.changes
+
+    changes = changes.replace(" ", "_").lower()
 
     main(changes)
