@@ -4,10 +4,9 @@ import os
 
 import tensorflow as tf
 from tensorflow import keras
-from tensorflow.keras import callbacks, layers, regularizers
-from tensorflow.keras.callbacks import TensorBoard
+from tensorflow.keras import callbacks, layers
 
-TRAINING_DIR = "data/PeopleWithGlassesDataset/train"
+TRAINING_DIR = "data/PeopleWithGlassesDatasetCropped/train"
 IMAGE_SIZE = (128, 128)
 BATCH_SIZE = 20
 VALIDATION_SPLIT = 0.2
@@ -73,45 +72,16 @@ def load_and_preprocess_dataset(data_augmentation):
 
 
 def create_model():
-    l1_reg = 0.0001
-    l2_reg = 0.0001
-
     return keras.Sequential(
         [
-            layers.Input(shape=(128, 128, 3), name="input"),
-            layers.Conv2D(
-                32,
-                (3, 3),
-                activation="relu",
-                name="conv1",
-                kernel_regularizer=regularizers.l1_l2(l1=l1_reg, l2=l2_reg),
-                bias_regularizer=regularizers.l1_l2(l1=l1_reg, l2=l2_reg),
-            ),
+            layers.Input(shape=(IMAGE_SIZE[0], IMAGE_SIZE[1], 3), name="input"),
+            layers.Conv2D(32, (3, 3), activation="relu", name="conv1"),
             layers.MaxPooling2D(2, 2, name="pool1"),
-            layers.Conv2D(
-                128,
-                (3, 3),
-                activation="relu",
-                name="conv2",
-                kernel_regularizer=regularizers.l1_l2(l1=l1_reg, l2=l2_reg),
-                bias_regularizer=regularizers.l1_l2(l1=l1_reg, l2=l2_reg),
-            ),
+            layers.Conv2D(64, (3, 3), activation="relu", name="conv2"),
             layers.MaxPooling2D(2, 2, name="pool2"),
             layers.Flatten(name="flatten"),
-            layers.Dense(
-                128,
-                activation="relu",
-                name="dense1",
-                kernel_regularizer=regularizers.l1_l2(l1=l1_reg, l2=l2_reg),
-                bias_regularizer=regularizers.l1_l2(l1=l1_reg, l2=l2_reg),
-            ),
-            layers.Dense(
-                1,
-                activation="sigmoid",
-                name="output",
-                kernel_regularizer=regularizers.l1_l2(l1=l1_reg, l2=l2_reg),
-                bias_regularizer=regularizers.l1_l2(l1=l1_reg, l2=l2_reg),
-            ),
+            layers.Dense(128, activation="relu", name="dense1"),
+            layers.Dense(1, activation="sigmoid", name="output"),
         ]
     )
 
@@ -124,21 +94,18 @@ def compile_model(model):
     )
 
 
-def create_callbacks(log_dir):
+def create_callbacks():
     return [
         callbacks.EarlyStopping(
-            monitor="val_loss",
-            patience=5,
-            restore_best_weights=True,
+            monitor="val_loss", patience=5, restore_best_weights=True
         ),
-        TensorBoard(log_dir=log_dir, histogram_freq=1),
     ]
 
 
 def train_model(model, train_dataset, validation_dataset, class_weight, callbacks):
     history = model.fit(
         train_dataset,
-        epochs=100,
+        epochs=1,
         validation_data=validation_dataset,
         class_weight=class_weight,
         callbacks=callbacks,
@@ -159,14 +126,11 @@ def main(changes):
     compile_model(model)
 
     timespan = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
-    log_dir = f"logs/fit/{changes}_{timespan}"
-    callbacks = create_callbacks(log_dir)
+    callbacks = create_callbacks()
 
-    history = train_model(
-        model, train_dataset, validation_dataset, class_weight, callbacks
-    )
+    train_model(model, train_dataset, validation_dataset, class_weight, callbacks)
 
-    model_path = f"{changes}_{timespan}.keras"
+    model_path = f"models/{changes}_{timespan}.keras"
     save_model(model, model_path)
     model.summary()
     print(f"Model saved as {model_path}")
