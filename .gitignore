@@ -20,3 +20,9 @@ Thumbs.db
 
 # Datasets
 data/
+
+# Logs
+logs/
+
+# Models archive 
+archive/
