@@ -21,7 +21,7 @@ poetry install
 
 ### 2. Download the dataset
 
-Ensure your dataset is structured properly under the `data` directory with the subdirectories `with_glasses/` and `without_glasses/`.
+Ensure your dataset is structured properly under the `data/PeopleWithGlassesDatasetCropped` directory with the subdirectories `with_glasses/` and `without_glasses/`.
 
 ### 3. Run the Model Training
 
