@@ -1,4 +1,4 @@
-# Binocular ML
+# Binocular ML 👓
 
 ## Overview
 
